@@ -64,6 +64,12 @@ cmake --build .
 ./bin/vertex
 ```
 
+**4. Run tests**
+
+```bash
+./bin/vertex_tests
+```
+
 ### Windows
 
 **Option A: vcpkg (recommended)**
@@ -92,6 +98,17 @@ Use the Linux instructions above inside a WSL terminal. The game runs identicall
 
 ---
 
+## Testing
+
+The project uses [doctest](https://github.com/doctest/doctest) for unit tests. Run `./bin/vertex_tests` after building.
+
+| Test Suite | Coverage |
+|------------|----------|
+| **PhysicsEngine** | Ground collision, ceiling clamp, horizontal bounds, gravity |
+| **State transitions** | Idle→Running, Running→Idle, Idle→Jumping (when grounded) |
+
+---
+
 ## Requirements
 
 - CMake 3.16+
@@ -114,6 +131,9 @@ vertex/
 │   ├── entity/           # Player, Entity
 │   ├── renderer/         # Renderer, BackBuffer, Sprite
 │   └── game/             # GameWorld (model)
+├── tests/
+│   ├── PhysicsEngineTests.cpp
+│   └── StateTransitionTests.cpp
 ├── CMakeLists.txt
 └── README.md
 ```

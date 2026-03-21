@@ -17,13 +17,19 @@ void PhysicsEngine::update(GameWorld& world, float dt) {
     pos.x += vx * dt;
     pos.y += vy * dt;
 
+    const float min_y = 0.0f;
     const float ground_level = static_cast<float>(world.getWorldHeight() - Player::SPRITE_HEIGHT - 2);
+
     if (pos.y >= ground_level) {
         pos.y = ground_level;
         vy = 0.0f;
         player->setGrounded(true);
     } else {
         player->setGrounded(false);
+        if (pos.y < min_y) {
+            pos.y = min_y;
+            vy = 0.0f;
+        }
     }
 
     const float max_x = static_cast<float>(world.getWorldWidth() - 3);
