@@ -9,25 +9,25 @@ Player::Player() {
     position_.y = 19.0f;
     setState(std::make_unique<IdleState>());
     sprite_idle_.lines = {
-        " O  ",
-        "/|\\ ",
-        "/ \\ "
+        " O ",
+        "/|\\",
+        "/ \\"
     };
     sprite_run_1_.lines = {
-        " O  ",
-        "/|\\ ",
-        "/   \\"
+        " O ",
+        "/|\\",
+        "/ \\"   // feet normal
     };
     sprite_run_2_.lines = {
-        " O  ",
-        "/|\\ ",
-        "\\   /"
+        " O ",
+        "/|\\",
+        "\\ /"   // feet crossed - stride
     };
 }
 
 const Sprite& Player::getSprite() const {
     if (dynamic_cast<const RunningState*>(getState()) != nullptr) {
-        const int frame = static_cast<int>(run_animation_time_ * 8.0f) % 2;
+        const int frame = static_cast<int>(run_animation_time_ * 14.0f) % 2;
         return (frame == 0) ? sprite_run_1_ : sprite_run_2_;
     }
     return sprite_idle_;

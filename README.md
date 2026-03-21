@@ -29,6 +29,7 @@ Input → Command → Player (Model) → PhysicsEngine updates positions → Ren
 |-----|--------|
 | Arrow keys / A / D | Move left / right |
 | Space / Up | Jump |
+| Down / S | Stop (release movement) |
 | Q / Esc | Quit |
 
 ---

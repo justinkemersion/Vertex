@@ -61,8 +61,10 @@ void Engine::processInput() {
         running_ = false;
         return;
     }
-    if (auto* player = gameWorld_->getPlayer()) {
-        inputHandler_->handleInput(ch, *player);
+    if (ch != ERR && ch != -1) {
+        if (auto* player = gameWorld_->getPlayer()) {
+            inputHandler_->handleInput(ch, *player);
+        }
     }
 }
 
