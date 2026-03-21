@@ -14,15 +14,14 @@ void RunningState::enter(Player& player) {
 }
 
 void RunningState::update(Player& player, float dt) {
-    (void)player;
-    (void)dt;
+    player.advanceRunAnimation(dt);
 }
 
 void RunningState::handleInput(Player& player, Command& command) {
     if (dynamic_cast<MoveLeftCommand*>(&command)) {
-        player.setVelocityX(-Player::RUN_SPEED);
+        player.setTargetVelocityX(-Player::RUN_SPEED);
     } else if (dynamic_cast<MoveRightCommand*>(&command)) {
-        player.setVelocityX(Player::RUN_SPEED);
+        player.setTargetVelocityX(Player::RUN_SPEED);
     } else if (dynamic_cast<IdleCommand*>(&command)) {
         player.setState(std::make_unique<IdleState>());
     } else if (dynamic_cast<JumpCommand*>(&command) && player.isGrounded()) {

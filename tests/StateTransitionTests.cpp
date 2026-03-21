@@ -24,7 +24,7 @@ TEST_CASE("State transition: Idle + MoveLeft -> Running") {
     cmd.execute(*player);
 
     CHECK(dynamic_cast<RunningState*>(player->getState()) != nullptr);
-    CHECK(player->getVelocityX() == doctest::Approx(-Player::RUN_SPEED));
+    CHECK(player->getTargetVelocityX() == doctest::Approx(-Player::RUN_SPEED));
 }
 
 TEST_CASE("State transition: Idle + MoveRight -> Running") {
@@ -37,7 +37,7 @@ TEST_CASE("State transition: Idle + MoveRight -> Running") {
     cmd.execute(*player);
 
     CHECK(dynamic_cast<RunningState*>(player->getState()) != nullptr);
-    CHECK(player->getVelocityX() == doctest::Approx(Player::RUN_SPEED));
+    CHECK(player->getTargetVelocityX() == doctest::Approx(Player::RUN_SPEED));
 }
 
 TEST_CASE("State transition: Running + Idle -> Idle") {
@@ -54,7 +54,7 @@ TEST_CASE("State transition: Running + Idle -> Idle") {
     idle_cmd.execute(*player);
 
     CHECK(dynamic_cast<IdleState*>(player->getState()) != nullptr);
-    CHECK(player->getVelocityX() == doctest::Approx(0.0f));
+    CHECK(player->getTargetVelocityX() == doctest::Approx(0.0f));
 }
 
 TEST_CASE("State transition: Idle + Jump when grounded -> Jumping") {

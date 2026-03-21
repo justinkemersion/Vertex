@@ -24,9 +24,9 @@ void JumpingState::update(Player& player, float dt) {
 
 void JumpingState::handleInput(Player& player, Command& command) {
     if (dynamic_cast<MoveLeftCommand*>(&command)) {
-        player.setVelocityX(-Player::RUN_SPEED);
+        player.setTargetVelocityX(-Player::RUN_SPEED);
     } else if (dynamic_cast<MoveRightCommand*>(&command)) {
-        player.setVelocityX(Player::RUN_SPEED);
+        player.setTargetVelocityX(Player::RUN_SPEED);
     }
 }
 

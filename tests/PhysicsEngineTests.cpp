@@ -51,7 +51,7 @@ TEST_CASE("PhysicsEngine: horizontal bounds clamp player") {
     Player* player = world.getPlayer();
     REQUIRE(player != nullptr);
 
-    const float max_x = 80.0f - 3.0f;
+    const float max_x = 80.0f - static_cast<float>(Player::SPRITE_WIDTH);
     player->setPosition({max_x + 50.0f, 19.0f});
     player->setVelocityX(100.0f);
 

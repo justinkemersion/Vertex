@@ -9,23 +9,23 @@
 namespace vertex {
 
 void IdleState::enter(Player& player) {
-    player.setVelocityX(0.0f);
+    player.setTargetVelocityX(0.0f);
 }
 
 void IdleState::update(Player& player, float dt) {
     (void)dt;
     if (!player.isGrounded()) {
-        player.setVelocityX(0.0f);
+        player.setTargetVelocityX(0.0f);
     }
 }
 
 void IdleState::handleInput(Player& player, Command& command) {
     if (dynamic_cast<MoveLeftCommand*>(&command)) {
         player.setState(std::make_unique<RunningState>());
-        player.setVelocityX(-Player::RUN_SPEED);
+        player.setTargetVelocityX(-Player::RUN_SPEED);
     } else if (dynamic_cast<MoveRightCommand*>(&command)) {
         player.setState(std::make_unique<RunningState>());
-        player.setVelocityX(Player::RUN_SPEED);
+        player.setTargetVelocityX(Player::RUN_SPEED);
     } else if (dynamic_cast<JumpCommand*>(&command) && player.isGrounded()) {
         player.setState(std::make_unique<JumpingState>());
         player.setVelocityY(Player::JUMP_VELOCITY);
