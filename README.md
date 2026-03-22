@@ -19,7 +19,7 @@ Input → Command → Player (Model) → PhysicsEngine updates positions → Ren
 
 | Layer       | Components                              | Responsibility                     |
 |------------|------------------------------------------|-------------------------------------|
-| **Model**  | GameWorld, Player, PhysicsEngine         | Game state, physics, no I/O        |
+| **Model**  | GameWorld, Player, PhysicsEngine, Obstacles | Game state, physics, no I/O     |
 | **View**   | Renderer, BackBuffer, Sprite             | Read positions, draw to terminal    |
 | **Controller** | InputHandler, Commands              | Map keys to actions                 |
 
@@ -27,10 +27,12 @@ Input → Command → Player (Model) → PhysicsEngine updates positions → Ren
 
 | Key | Action |
 |-----|--------|
-| Arrow keys / A / D | Move left / right |
-| Space / Up | Jump |
-| Down / S | Stop (release movement) |
-| Q / Esc | Quit |
+| **← →** or **A** / **D** | Move left / right |
+| **Space** or **↑** | Jump |
+| **↓** or **S** | Stop horizontal movement (explicit) |
+| **Q** | Quit |
+
+**Terminal input:** There are no true key-up events in curses; the engine drains the input buffer each frame, combines **move + jump** when both appear in the same batch (so you can run and hop together), and stops movement after a short idle when no movement keys arrive (tuned for typical key-repeat timing). Gameplay while **holding forward and jumping** is still being refined.
 
 ---
 
@@ -103,10 +105,10 @@ Use the Linux instructions above inside a WSL terminal. The game runs identicall
 
 The project uses [doctest](https://github.com/doctest/doctest) for unit tests. Run `./bin/vertex_tests` after building.
 
-| Test Suite | Coverage |
-|------------|----------|
-| **PhysicsEngine** | Ground collision, ceiling clamp, horizontal bounds, gravity |
-| **State transitions** | Idle→Running, Running→Idle, Idle→Jumping (when grounded) |
+| Suite | What it covers |
+|-------|----------------|
+| **PhysicsEngine** | Ground, ceiling, horizontal world bounds, gravity, obstacle landing vs side collision, jump-not-stopped while rising |
+| **State transitions** | Idle ↔ Running, jump from idle, target velocity vs actual velocity (acceleration), air idle (target X zero in jump) |
 
 ---
 
@@ -118,23 +120,33 @@ The project uses [doctest](https://github.com/doctest/doctest) for unit tests. R
 
 ---
 
-## Project Layout
+## Project layout
 
 ```
 vertex/
-├── src/
-│   ├── main.cpp          # Entry point
-│   ├── Engine.*          # ncurses init, subsystems
-│   ├── GameLoop.*        # Delta-time loop
-│   ├── input/            # Command pattern
-│   ├── physics/          # PhysicsEngine, Vector2
-│   ├── state/            # Idle, Running, Jumping
-│   ├── entity/           # Player, Entity
-│   ├── renderer/         # Renderer, BackBuffer, Sprite
-│   └── game/             # GameWorld (model)
-├── tests/
-│   ├── PhysicsEngineTests.cpp
-│   └── StateTransitionTests.cpp
+├── .gitignore
 ├── CMakeLists.txt
-└── README.md
+├── README.md
+├── src/
+│   ├── main.cpp              # Entry point
+│   ├── Engine.*              # ncurses, input batching, subsystems
+│   ├── GameLoop.*            # Fixed-step (~60 Hz) loop
+│   ├── entity/
+│   │   ├── Entity.hpp
+│   │   └── Player.*
+│   ├── game/
+│   │   ├── GameWorld.*       # World size, camera, level/obstacles
+│   │   └── Obstacle.hpp    # Axis-aligned obstacle blocks
+│   ├── input/                # Command pattern (Command, InputHandler, moves, jump, idle)
+│   ├── physics/
+│   │   ├── PhysicsEngine.*
+│   │   └── Vector2.hpp
+│   ├── renderer/
+│   │   ├── Renderer.*, BackBuffer.*, Sprite.hpp
+│   └── state/                # PlayerState: Idle, Running, Jumping
+└── tests/
+    ├── PhysicsEngineTests.cpp
+    └── StateTransitionTests.cpp
 ```
+
+Build artifacts go under `build/` (ignored by git); binaries are written to `build/bin/`.
