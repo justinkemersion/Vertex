@@ -23,6 +23,47 @@ Input → Command → Player (Model) → PhysicsEngine updates positions → Ren
 | **View**   | Renderer, BackBuffer, Sprite             | Read positions, draw to terminal    |
 | **Controller** | InputHandler, Commands              | Map keys to actions                 |
 
+### Runtime flow (software engineering focus)
+
+The diagram below is the mental model for one frame: **where patterns sit**, how **Model** stays free of ncurses, and how **View** only reads state.
+
+```mermaid
+flowchart TB
+  GL[GameLoop fixed delta-t ~60 Hz]
+  GL --> PI[Engine.processInput]
+  GL --> UP[Engine.update]
+  GL --> RD[Engine.render]
+
+  PI --> KB[Drain key buffer move jump idle intent]
+  KB --> IH[InputHandler]
+  IH --> CM[Concrete Command Command pattern]
+  CM --> EX[Command.execute Player]
+  EX --> HIN[PlayerState.handleInput]
+  HIN --> ST[Idle Running Jumping State pattern]
+  ST -->|target vx state changes| PL[Player]
+
+  UP --> PHY[PhysicsEngine.update GameWorld]
+  PHY --> MD[Model positions velocity grounded obstacles]
+  UP --> SU[PlayerState.update]
+  SU --> PL
+  PL --> MD
+
+  RD --> RV[Renderer BackBuffer View]
+  RV -->|read-only| MD
+  RV --> SCR[ncurses output Engine init plus Renderer]
+
+  style CM fill:#dbeafe
+  style ST fill:#fef3c7
+  style PHY fill:#d1fae5
+  style MD fill:#d1fae5
+  style RV fill:#ede9fe
+```
+
+- **Blue** — Command pattern: keys become encapsulated actions, executed against the player.
+- **Amber** — State pattern: movement logic and transitions live in `Idle` / `Running` / `Jumping`, not in a giant `switch` on keys.
+- **Green** — Model + physics: simulation and world state; no terminal I/O.
+- **Violet** — View: draws from the model; **ncurses is only used in this pipeline** (via `Engine` init + `Renderer`).
+
 ## Controls
 
 | Key | Action |
