@@ -9,12 +9,12 @@ namespace vertex {
 
 class Player : public Entity {
 public:
-    static constexpr float GRAVITY = 320.0f;
+    static constexpr float GRAVITY = 460.0f;
     static constexpr float RUN_SPEED = 85.0f;
-    static constexpr float RUN_ACCELERATION = 650.0f;
-    static constexpr float GROUND_FRICTION = 750.0f;
-    static constexpr float AIR_CONTROL = 0.6f;
-    static constexpr float JUMP_VELOCITY = -240.0f;
+    static constexpr float RUN_ACCELERATION = 1200.0f;
+    static constexpr float GROUND_FRICTION = 900.0f;
+    static constexpr float AIR_CONTROL = 1.0f;
+    static constexpr float JUMP_VELOCITY = -78.0f;
     static constexpr int SPRITE_HEIGHT = 3;
     static constexpr int SPRITE_WIDTH = 3;
 

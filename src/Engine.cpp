@@ -2,6 +2,7 @@
 #include "GameLoop.hpp"
 #include "renderer/Renderer.hpp"
 #include "input/InputHandler.hpp"
+#include "input/IdleCommand.hpp"
 #include "physics/PhysicsEngine.hpp"
 #include "game/GameWorld.hpp"
 #include "entity/Player.hpp"
@@ -55,21 +56,64 @@ void Engine::run() {
     gameLoop_->run();
 }
 
+bool Engine::isMovementKey(int key) {
+    return key == KEY_LEFT || key == KEY_RIGHT ||
+           key == 'a' || key == 'A' || key == 'd' || key == 'D';
+}
+
 void Engine::processInput() {
-    int ch = getch();
-    if (ch == 'q' || ch == 'Q' || ch == 27) {
-        running_ = false;
-        return;
+    auto* player = gameWorld_->getPlayer();
+    bool got_movement = false;
+    int horizontal_key = ERR;
+    bool jump_requested = false;
+    bool idle_requested = false;
+
+    int ch;
+    while ((ch = getch()) != ERR) {
+        if (ch == 'q' || ch == 'Q') {
+            running_ = false;
+            return;
+        }
+
+        if (isMovementKey(ch)) {
+            horizontal_key = ch;
+            got_movement = true;
+        } else if (ch == KEY_UP || ch == static_cast<int>(' ')) {
+            jump_requested = true;
+        } else if (ch == KEY_DOWN || ch == static_cast<int>('s') || ch == static_cast<int>('S')) {
+            idle_requested = true;
+        }
     }
-    if (ch != ERR && ch != -1) {
-        if (auto* player = gameWorld_->getPlayer()) {
-            inputHandler_->handleInput(ch, *player);
+
+    if (!player) return;
+
+    if (horizontal_key != ERR) {
+        inputHandler_->handleInput(horizontal_key, *player);
+    }
+    if (jump_requested) {
+        inputHandler_->handleInput(KEY_UP, *player);
+    } else if (idle_requested && horizontal_key == ERR) {
+        inputHandler_->handleInput(KEY_DOWN, *player);
+    }
+
+    if (got_movement) {
+        if (frames_since_movement_ > 0) {
+            movement_held_ = true;
+        }
+        frames_since_movement_ = 0;
+    } else {
+        frames_since_movement_++;
+        const int threshold = movement_held_ ? HELD_IDLE_THRESHOLD : TAP_IDLE_THRESHOLD;
+        if (frames_since_movement_ >= threshold && player->getTargetVelocityX() != 0.0f) {
+            IdleCommand().execute(*player);
+            movement_held_ = false;
         }
     }
 }
 
 void Engine::update(float dt) {
     physicsEngine_->update(*gameWorld_, dt);
+    gameWorld_->updateCamera();
     if (auto* player = gameWorld_->getPlayer()) {
         if (player->getState()) {
             player->getState()->update(*player, dt);

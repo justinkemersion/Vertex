@@ -1,8 +1,10 @@
 #pragma once
 
 #include "entity/Player.hpp"
+#include "game/Obstacle.hpp"
 #include "physics/PhysicsEngine.hpp"
 #include <memory>
+#include <vector>
 
 namespace vertex {
 
@@ -14,15 +16,26 @@ public:
     const Player* getPlayer() const { return player_.get(); }
     PhysicsEngine& getPhysics() { return physics_; }
 
-    int getWorldWidth() const { return world_width_; }
-    int getWorldHeight() const { return world_height_; }
-    void setWorldSize(int w, int h) { world_width_ = w; world_height_ = h; }
+    int getScreenWidth() const { return screen_width_; }
+    int getScreenHeight() const { return screen_height_; }
+    void setWorldSize(int w, int h);
+
+    int getLevelWidth() const { return level_width_; }
+    float getCameraX() const { return camera_x_; }
+    void updateCamera();
+    void buildLevel();
+
+    const std::vector<Obstacle>& getObstacles() const { return obstacles_; }
 
 private:
+
     std::unique_ptr<Player> player_;
     PhysicsEngine physics_;
-    int world_width_{80};
-    int world_height_{24};
+    int screen_width_{80};
+    int screen_height_{24};
+    int level_width_{400};
+    float camera_x_{0.0f};
+    std::vector<Obstacle> obstacles_;
 };
 
 }  // namespace vertex

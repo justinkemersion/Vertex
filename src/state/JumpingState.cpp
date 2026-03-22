@@ -2,6 +2,7 @@
 #include "entity/Player.hpp"
 #include "input/MoveLeftCommand.hpp"
 #include "input/MoveRightCommand.hpp"
+#include "input/IdleCommand.hpp"
 #include "state/IdleState.hpp"
 #include "state/RunningState.hpp"
 
@@ -27,6 +28,8 @@ void JumpingState::handleInput(Player& player, Command& command) {
         player.setTargetVelocityX(-Player::RUN_SPEED);
     } else if (dynamic_cast<MoveRightCommand*>(&command)) {
         player.setTargetVelocityX(Player::RUN_SPEED);
+    } else if (dynamic_cast<IdleCommand*>(&command)) {
+        player.setTargetVelocityX(0.0f);
     }
 }
 

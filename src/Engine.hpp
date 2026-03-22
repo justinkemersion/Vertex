@@ -25,8 +25,13 @@ public:
 private:
     void initNcurses();
     void shutdownNcurses();
+    static bool isMovementKey(int key);
 
     bool running_{true};
+    int frames_since_movement_{0};
+    bool movement_held_{false};
+    static constexpr int TAP_IDLE_THRESHOLD = 22;
+    static constexpr int HELD_IDLE_THRESHOLD = 4;
     std::unique_ptr<GameLoop> gameLoop_;
     std::unique_ptr<Renderer> renderer_;
     std::unique_ptr<InputHandler> inputHandler_;
