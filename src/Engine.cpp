@@ -96,9 +96,8 @@ void Engine::processInput(float dt) {
     }
 
     if (got_movement) {
-        if (time_since_movement_ > 0.0f) {
-            movement_held_ = true;
-        }
+        movement_held_ = (time_since_movement_ > 0.0f &&
+                          time_since_movement_ < MAX_REPEAT_GAP);
         time_since_movement_ = 0.0f;
     } else {
         time_since_movement_ += dt;

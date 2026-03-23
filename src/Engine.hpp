@@ -30,8 +30,9 @@ private:
     bool running_{true};
     float time_since_movement_{0.0f};
     bool movement_held_{false};
-    static constexpr float TAP_IDLE_TIME = 0.35f;
+    static constexpr float TAP_IDLE_TIME = 0.55f;
     static constexpr float HELD_IDLE_TIME = 0.20f;
+    static constexpr float MAX_REPEAT_GAP = 0.15f;
     std::unique_ptr<GameLoop> gameLoop_;
     std::unique_ptr<Renderer> renderer_;
     std::unique_ptr<InputHandler> inputHandler_;

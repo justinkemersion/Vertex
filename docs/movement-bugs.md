@@ -113,10 +113,18 @@ Auto-idle thresholds live in `src/Engine.hpp`:
 
 | Constant | Value | Effect |
 |---|---|---|
-| `HELD_IDLE_TIME` | 0.20 | Seconds without key event before inferring key release (held keys) |
-| `TAP_IDLE_TIME` | 0.35 | Seconds without key event before inferring key release (first press) |
+| `HELD_IDLE_TIME` | 0.20 | Seconds without key event before inferring key release (confirmed held keys) |
+| `TAP_IDLE_TIME` | 0.55 | Seconds without key event before inferring key release (first press / unconfirmed) |
+| `MAX_REPEAT_GAP` | 0.15 | Max gap between key events to count as key repeat (confirms held key) |
+
+### How the auto-idle distinguishes taps from held keys
+
+ncurses has no key-up events, so the engine infers key release from silence. The challenge is the **initial keyboard repeat delay** — when you press and hold a key, there's a 250-500ms gap (system-dependent) before repeat events start arriving.
+
+`movement_held_` is only set to `true` when two key events arrive within `MAX_REPEAT_GAP` (150ms) of each other. This confirms active key repeat, switching to the tight `HELD_IDLE_TIME` (200ms) threshold. On the first press, the long `TAP_IDLE_TIME` (550ms) threshold is used, which survives the initial repeat delay on most systems.
 
 If movement still feels off, the most impactful values to adjust are:
-- `HELD_IDLE_TIME` — raise if keys still cause jolts on your system (keyboard repeat rate varies)
+- `TAP_IDLE_TIME` — raise if the initial key press still causes a pause (your system's repeat delay may be > 500ms; check with `xset q | grep delay`)
+- `HELD_IDLE_TIME` — raise if held keys still cause jolts (unlikely unless repeat rate is very slow)
 - `GROUND_FRICTION` — lower for more slide, higher for snappier stops
 - `RUN_ACCELERATION` — lower for more gradual startup
