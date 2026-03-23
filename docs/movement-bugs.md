@@ -123,6 +123,8 @@ ncurses has no key-up events, so the engine infers key release from silence. The
 
 `movement_held_` is only set to `true` when two key events arrive within `MAX_REPEAT_GAP` (150ms) of each other. This confirms active key repeat, switching to the tight `HELD_IDLE_TIME` (200ms) threshold. On the first press, the long `TAP_IDLE_TIME` (550ms) threshold is used, which survives the initial repeat delay on most systems.
 
+Additionally, while the player is airborne, the auto-idle timer and `movement_held_` flag are both reset every frame. This prevents the timer from accumulating during a jump (when key repeat gaps are harmless) and then firing immediately on landing. After landing, the timer starts fresh with the TAP threshold, giving the first key repeat time to arrive and confirm the held key.
+
 If movement still feels off, the most impactful values to adjust are:
 - `TAP_IDLE_TIME` — raise if the initial key press still causes a pause (your system's repeat delay may be > 500ms; check with `xset q | grep delay`)
 - `HELD_IDLE_TIME` — raise if held keys still cause jolts (unlikely unless repeat rate is very slow)

@@ -100,7 +100,12 @@ void Engine::processInput(float dt) {
                           time_since_movement_ < MAX_REPEAT_GAP);
         time_since_movement_ = 0.0f;
     } else {
-        time_since_movement_ += dt;
+        if (player->isGrounded()) {
+            time_since_movement_ += dt;
+        } else {
+            time_since_movement_ = 0.0f;
+            movement_held_ = false;
+        }
         const float threshold = movement_held_ ? HELD_IDLE_TIME : TAP_IDLE_TIME;
         if (time_since_movement_ >= threshold && player->getTargetVelocityX() != 0.0f &&
             player->isGrounded() && !jump_requested) {
