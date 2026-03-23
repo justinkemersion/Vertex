@@ -73,7 +73,20 @@ flowchart TB
 | **↓** or **S** | Stop horizontal movement (explicit) |
 | **Q** | Quit |
 
-**Terminal input:** There are no true key-up events in curses; the engine drains the input buffer each frame, combines **move + jump** when both appear in the same batch (so you can run and hop together), and stops movement after a short idle when no movement keys arrive (tuned for typical key-repeat timing). Gameplay while **holding forward and jumping** is still being refined.
+**Terminal input:** There are no true key-up events in curses; the engine drains the input buffer each frame, combines **move + jump** when both appear in the same batch (so you can run and hop together), and stops movement after a short idle when no movement keys arrive (tuned for typical key-repeat timing).
+
+---
+
+## Make It Yours
+
+The movement in Vertex is controlled by a handful of plain numbers in the source code. Change a number, rebuild, and feel the difference. The **[Tuning Guide](docs/tuning-guide.md)** walks through:
+
+- **Where every constant lives** and what happens when you change it (gravity, speed, friction, jump height, air control)
+- **How a key press becomes movement** — the full chain from terminal input to physics to pixels, explained step by step
+- **Quick experiments** to try — moon gravity, ice physics, no air control, custom sprites, new obstacles
+- **A file map** showing what C++ concepts each source file demonstrates (vectors, smart pointers, inheritance, the command and state patterns)
+
+Whether you're exploring C++ for the first time or just want the jump to feel different, start there.
 
 ---
 
