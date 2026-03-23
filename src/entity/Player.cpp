@@ -1,6 +1,8 @@
 #include "entity/Player.hpp"
 #include "state/IdleState.hpp"
+#include "state/JumpingState.hpp"
 #include "state/RunningState.hpp"
+#include <cmath>
 
 namespace vertex {
 
@@ -26,7 +28,10 @@ Player::Player() {
 }
 
 const Sprite& Player::getSprite() const {
-    if (dynamic_cast<const RunningState*>(getState()) != nullptr) {
+    const bool show_run = dynamic_cast<const RunningState*>(getState()) != nullptr ||
+        (dynamic_cast<const JumpingState*>(getState()) != nullptr &&
+         std::abs(getTargetVelocityX()) > 0.1f);
+    if (show_run) {
         const int frame = static_cast<int>(run_animation_time_ * 14.0f) % 2;
         return (frame == 0) ? sprite_run_1_ : sprite_run_2_;
     }

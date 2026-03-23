@@ -17,7 +17,7 @@ void GameLoop::run() {
 
         if (dt > 0.25f) dt = 0.25f;
 
-        engine_.processInput();
+        engine_.processInput(dt);
         engine_.update(dt);
         engine_.render();
 

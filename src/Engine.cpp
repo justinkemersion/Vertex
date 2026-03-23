@@ -2,7 +2,6 @@
 #include "GameLoop.hpp"
 #include "renderer/Renderer.hpp"
 #include "input/InputHandler.hpp"
-#include "input/IdleCommand.hpp"
 #include "physics/PhysicsEngine.hpp"
 #include "game/GameWorld.hpp"
 #include "entity/Player.hpp"
@@ -61,7 +60,7 @@ bool Engine::isMovementKey(int key) {
            key == 'a' || key == 'A' || key == 'd' || key == 'D';
 }
 
-void Engine::processInput() {
+void Engine::processInput(float dt) {
     auto* player = gameWorld_->getPlayer();
     bool got_movement = false;
     int horizontal_key = ERR;
@@ -97,15 +96,16 @@ void Engine::processInput() {
     }
 
     if (got_movement) {
-        if (frames_since_movement_ > 0) {
+        if (time_since_movement_ > 0.0f) {
             movement_held_ = true;
         }
-        frames_since_movement_ = 0;
+        time_since_movement_ = 0.0f;
     } else {
-        frames_since_movement_++;
-        const int threshold = movement_held_ ? HELD_IDLE_THRESHOLD : TAP_IDLE_THRESHOLD;
-        if (frames_since_movement_ >= threshold && player->getTargetVelocityX() != 0.0f) {
-            IdleCommand().execute(*player);
+        time_since_movement_ += dt;
+        const float threshold = movement_held_ ? HELD_IDLE_TIME : TAP_IDLE_TIME;
+        if (time_since_movement_ >= threshold && player->getTargetVelocityX() != 0.0f &&
+            player->isGrounded() && !jump_requested) {
+            player->setTargetVelocityX(0.0f);
             movement_held_ = false;
         }
     }

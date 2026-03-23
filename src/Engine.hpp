@@ -18,7 +18,7 @@ public:
     void run();
 
     bool isRunning() const { return running_; }
-    void processInput();
+    void processInput(float dt);
     void update(float dt);
     void render();
 
@@ -28,10 +28,10 @@ private:
     static bool isMovementKey(int key);
 
     bool running_{true};
-    int frames_since_movement_{0};
+    float time_since_movement_{0.0f};
     bool movement_held_{false};
-    static constexpr int TAP_IDLE_THRESHOLD = 22;
-    static constexpr int HELD_IDLE_THRESHOLD = 4;
+    static constexpr float TAP_IDLE_TIME = 0.35f;
+    static constexpr float HELD_IDLE_TIME = 0.20f;
     std::unique_ptr<GameLoop> gameLoop_;
     std::unique_ptr<Renderer> renderer_;
     std::unique_ptr<InputHandler> inputHandler_;

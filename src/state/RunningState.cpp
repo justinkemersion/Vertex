@@ -1,5 +1,6 @@
 #include "state/RunningState.hpp"
 #include "entity/Player.hpp"
+#include <cmath>
 #include "input/MoveLeftCommand.hpp"
 #include "input/MoveRightCommand.hpp"
 #include "input/IdleCommand.hpp"
@@ -15,6 +16,10 @@ void RunningState::enter(Player& player) {
 
 void RunningState::update(Player& player, float dt) {
     player.advanceRunAnimation(dt);
+    if (std::abs(player.getTargetVelocityX()) < 0.1f &&
+        std::abs(player.getVelocityX()) < 1.0f) {
+        player.setState(std::make_unique<IdleState>());
+    }
 }
 
 void RunningState::handleInput(Player& player, Command& command) {
